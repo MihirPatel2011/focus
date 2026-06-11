@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Project, ProjectStatus } from "@/data/types";
 import { createProject, updateProject } from "@/data/projects";
+import { useDataStore } from "@/logic/stores/dataStore";
 import { useUid } from "@/logic/useCurrentUser";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
@@ -20,11 +21,14 @@ export function ProjectForm({
   project,
   onClose,
 }: {
+  /** Preselected area. Pass "" to let the user choose (e.g. global Projects page). */
   areaId: string;
   project?: Project;
   onClose: () => void;
 }) {
   const uid = useUid();
+  const liveAreas = useDataStore((s) => s.areas).filter((a) => !a.archived);
+  const [area, setArea] = useState(project?.areaId ?? areaId ?? "");
   const [name, setName] = useState(project?.name ?? "");
   const [description, setDescription] = useState(project?.description ?? "");
   const [status, setStatus] = useState<ProjectStatus>(
@@ -36,12 +40,13 @@ export function ProjectForm({
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    if (!uid || !name.trim()) return;
+    if (!uid || !name.trim() || !area) return;
     setSaving(true);
     try {
       if (project) {
         await updateProject(uid, project.id, {
           name: name.trim(),
+          areaId: area,
           description: description.trim(),
           status,
           priority,
@@ -50,7 +55,7 @@ export function ProjectForm({
       } else {
         await createProject(uid, {
           name: name.trim(),
-          areaId,
+          areaId: area,
           description: description.trim(),
           status,
           priority,
@@ -73,6 +78,21 @@ export function ProjectForm({
           placeholder="Project name"
           className="rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
         />
+        <label className="text-sm">
+          <span className="mb-1 block text-xs font-medium text-muted">Area</span>
+          <select
+            value={area}
+            onChange={(e) => setArea(e.target.value)}
+            className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+          >
+            <option value="">— choose an area —</option>
+            {liveAreas.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.name}
+              </option>
+            ))}
+          </select>
+        </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -132,7 +152,7 @@ export function ProjectForm({
           <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="submit" disabled={saving || !name.trim()}>
+          <Button type="submit" disabled={saving || !name.trim() || !area}>
             {project ? "Save" : "Create"}
           </Button>
         </div>

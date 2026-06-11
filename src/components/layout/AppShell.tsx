@@ -15,6 +15,7 @@ const NAV = [
   { to: "/inbox", label: "Inbox", icon: "📥" },
   { to: "/tasks", label: "Tasks", icon: "✅" },
   { to: "/areas", label: "Areas", icon: "🗂️" },
+  { to: "/projects", label: "Projects", icon: "📁" },
   { to: "/focus", label: "Focus", icon: "⏱️" },
   { to: "/stats", label: "Stats", icon: "📊" },
 ];
@@ -83,15 +84,15 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto max-w-3xl p-4 md:p-8">{children}</div>
       </main>
 
-      {/* Bottom tab bar (mobile) */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-line bg-surface/95 backdrop-blur md:hidden">
+      {/* Bottom tab bar (mobile) — horizontally scrollable for all destinations */}
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex overflow-x-auto border-t border-line bg-surface/95 backdrop-blur md:hidden">
         {NAV.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             end={item.end}
             className={({ isActive }) =>
-              `flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] ${
+              `flex min-w-[3.5rem] flex-1 flex-col items-center gap-0.5 py-2 text-[11px] ${
                 isActive ? "text-ink" : "text-muted"
               }`
             }

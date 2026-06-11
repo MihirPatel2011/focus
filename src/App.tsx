@@ -8,6 +8,7 @@ import { LoginPage } from "@/pages/LoginPage";
 import { HomePage } from "@/pages/HomePage";
 import { AreasPage } from "@/pages/AreasPage";
 import { AreaDetailPage } from "@/pages/AreaDetailPage";
+import { ProjectsPage } from "@/pages/ProjectsPage";
 import { ProjectDetailPage } from "@/pages/ProjectDetailPage";
 import { InboxPage } from "@/pages/InboxPage";
 import { TasksPage } from "@/pages/TasksPage";
@@ -66,6 +67,7 @@ export default function App() {
         <Route path="/plan" element={<PlanPage />} />
         <Route path="/areas" element={<AreasPage />} />
         <Route path="/areas/:areaId" element={<AreaDetailPage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
         <Route path="/focus" element={<FocusPage />} />
         <Route path="/stats" element={<StatsPage />} />
