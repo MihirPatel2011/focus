@@ -135,7 +135,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto pb-28 md:pb-0">
+      <main className="flex-1 overflow-y-auto pb-36 md:pb-0">
         <div className="animate-rise mx-auto max-w-3xl p-4 pt-6 md:p-10">
           {children}
         </div>
