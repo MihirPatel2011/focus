@@ -69,7 +69,7 @@ export function FocusOverlay() {
     <div
       className="animate-fade fixed inset-0 z-50 flex flex-col items-center justify-center px-6 pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] text-center"
       style={{
-        background: `radial-gradient(110% 90% at 50% -10%, ${accent}2e 0%, #14110d 55%, #0c0a07 100%)`,
+        background: `radial-gradient(110% 90% at 50% -10%, ${accent}3a 0%, transparent 60%), #100d0a`,
         color: "#f4f1ea",
       }}
     >
