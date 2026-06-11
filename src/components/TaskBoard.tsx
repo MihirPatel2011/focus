@@ -23,6 +23,7 @@ const VIEWS: { key: TaskView; label: string }[] = [
   { key: "overdue", label: "Overdue" },
   { key: "nodate", label: "No date" },
   { key: "all", label: "All" },
+  { key: "done", label: "Done" },
 ];
 
 /**
@@ -155,7 +156,8 @@ function EmptyState({ view }: { view: TaskView }) {
     overdue: "Nothing overdue. Keep it that way.",
     nodate: "Every task has a date. Tidy.",
     inbox: "Inbox is empty.",
-    all: "No tasks yet — press n to capture your first one.",
+    all: "No open tasks — press n to capture one.",
+    done: "Nothing completed yet. It'll feel good when there is.",
   };
   return (
     <div className="rounded-2xl border border-dashed border-line2/70 px-6 py-14 text-center">
@@ -181,6 +183,8 @@ function TaskRow({ task, onEdit }: { task: Task; onEdit: () => void }) {
   const overdue = isOverdue(task.dueDate);
   const dueToday = isToday(task.dueDate);
   const done = task.status === "done";
+  const steps = task.checklist ?? [];
+  const stepsDone = steps.filter((s) => s.done).length;
 
   return (
     <li className="group flex items-center gap-3 px-3.5 py-3 transition-colors duration-150 hover:bg-ink/[0.025] sm:px-4">
@@ -217,6 +221,18 @@ function TaskRow({ task, onEdit }: { task: Task; onEdit: () => void }) {
           >
             {URGENCY_LABELS[task.urgency].label}
           </span>
+          {steps.length > 0 && (
+            <span
+              className={
+                stepsDone === steps.length
+                  ? "tabular-nums text-[#7d8a4e]"
+                  : "tabular-nums text-muted"
+              }
+              title="Checklist progress"
+            >
+              · {stepsDone}/{steps.length}
+            </span>
+          )}
           {project && (
             <span className="text-muted">
               · {project.name}

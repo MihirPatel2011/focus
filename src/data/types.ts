@@ -79,10 +79,19 @@ export interface Recurrence {
   nextDueDate?: IsoDate;
 }
 
+/** A tickable step inside a task. */
+export interface ChecklistItem {
+  id: string;
+  title: string;
+  done: boolean;
+}
+
 export interface Task {
   id: string;
   title: string;
   notes?: string;
+  /** Optional sub-steps (checklist) within the task. */
+  checklist?: ChecklistItem[];
   urgency: Urgency;
   dueDate?: IsoDate;
   status: TaskStatus;
@@ -102,6 +111,7 @@ export type NewTask = Pick<Task, "title"> &
     Pick<
       Task,
       | "notes"
+      | "checklist"
       | "urgency"
       | "dueDate"
       | "status"

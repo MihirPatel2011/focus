@@ -72,6 +72,8 @@ export function buildNextInstance(task: Task): NewTask | null {
   return {
     title: task.title,
     notes: task.notes,
+    // Carry the checklist into the next instance with every step unticked.
+    checklist: task.checklist?.map((i) => ({ ...i, done: false })),
     urgency: task.urgency,
     areaId: task.areaId,
     projectId: task.projectId,

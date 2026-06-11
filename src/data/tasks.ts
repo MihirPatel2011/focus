@@ -55,6 +55,7 @@ export async function createTask(uid: string, input: NewTask): Promise<string> {
     ...(input.estimateMinutes != null
       ? { estimateMinutes: input.estimateMinutes }
       : {}),
+    ...(input.checklist?.length ? { checklist: input.checklist } : {}),
     ...(input.recurrence ? { recurrence: input.recurrence } : {}),
     ...(input.plannedFor ? { plannedFor: input.plannedFor } : {}),
     createdAt: Date.now(),

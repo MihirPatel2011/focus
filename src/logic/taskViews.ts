@@ -24,7 +24,8 @@ export type TaskView =
   | "overdue"
   | "nodate"
   | "inbox"
-  | "all";
+  | "all"
+  | "done";
 
 export type TaskSort = "urgency" | "dueDate" | "area";
 
@@ -62,9 +63,15 @@ export function filterTasks(tasks: Task[], view: TaskView): Task[] {
       return tasks.filter((t) => isOpen(t) && isOverdue(t.dueDate));
     case "nodate":
       return tasks.filter((t) => isOpen(t) && !t.dueDate && !isInbox(t));
+    case "done":
+      // Logbook: completed tasks, most recently finished first.
+      return tasks
+        .filter((t) => t.status === "done")
+        .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
     case "all":
     default:
-      return tasks.filter((t) => !isInbox(t));
+      // Everything actionable — completed history lives in the Done view.
+      return tasks.filter((t) => !isInbox(t) && isOpen(t));
   }
 }
 
