@@ -41,12 +41,18 @@ export const useDataStore = create<DataState>((set, get) => ({
     // Reset any previous subscriptions first.
     get()._unsubs.forEach((fn) => fn());
 
-    const onError = (e: Error) => set({ error: e.message });
+    const onError = (e: Error) => {
+      // eslint-disable-next-line no-console
+      console.log("[focus-debug] watch ERROR", e?.message, e);
+      set({ error: e.message });
+    };
 
     // Aggregate pending-write state across all collections into one flag.
     const pending: Record<string, boolean> = {};
     const note = (key: string, hasPending: boolean) => {
       pending[key] = hasPending;
+      // eslint-disable-next-line no-console
+      console.log(`[focus-debug] snap ${key} pending=${hasPending}`);
       set({ pendingWrites: Object.values(pending).some(Boolean) });
     };
 
@@ -101,6 +107,11 @@ export const useDataStore = create<DataState>((set, get) => ({
     });
   },
 }));
+
+// TEMP debug: expose store for live diagnosis.
+if (typeof window !== "undefined")
+  (window as unknown as { __focusStore: typeof useDataStore }).__focusStore =
+    useDataStore;
 
 // ─── Selectors (derive-on-read; keep components dumb) ───
 

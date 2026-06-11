@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDataStore } from "@/logic/stores/dataStore";
 import {
@@ -8,14 +8,15 @@ import {
 } from "@/logic/projectStats";
 import { iconEmoji } from "@/lib/icons";
 import { formatDuration, isOverdue, countdownLabel } from "@/lib/dates";
+import type { Project } from "@/data/types";
 import { Button } from "@/components/ui/Button";
 import { ProjectForm } from "@/components/ProjectForm";
 import { StatusBadge } from "@/pages/AreaDetailPage";
 
 /**
  * Top-level Projects hub: every project across all areas, grouped by area.
- * A project belongs to one area and holds tasks (which also appear in Tasks /
- * Home). Click any project to open its detail view.
+ * Projects whose area is archived or was deleted are still shown (grouped under
+ * a fallback) so nothing ever gets hidden.
  */
 export function ProjectsPage() {
   const areas = useDataStore((s) => s.areas);
@@ -26,8 +27,35 @@ export function ProjectsPage() {
   const [creating, setCreating] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
 
-  const liveAreas = areas.filter((a) => !a.archived);
-  const visible = projects.filter((p) => showArchived || !p.archived);
+  const hasArea = areas.some((a) => !a.archived);
+
+  // Group every visible project by its areaId (resolving the area, which may be
+  // archived or missing). Built from the projects themselves so orphans show.
+  const groups = useMemo(() => {
+    const areaById = new Map(areas.map((a) => [a.id, a]));
+    const visible = projects.filter((p) => showArchived || !p.archived);
+    const byArea = new Map<string, Project[]>();
+    for (const p of visible) {
+      const arr = byArea.get(p.areaId);
+      if (arr) arr.push(p);
+      else byArea.set(p.areaId, [p]);
+    }
+    return [...byArea.entries()]
+      .map(([areaId, items]) => {
+        const area = areaById.get(areaId);
+        return {
+          areaId,
+          area,
+          label: area
+            ? area.name + (area.archived ? " (archived)" : "")
+            : "Area removed",
+          color: area?.color ?? "#94a3b8",
+          icon: area ? iconEmoji(area.icon) : "❓",
+          items: items.sort((a, b) => b.priority - a.priority),
+        };
+      })
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [areas, projects, showArchived]);
 
   return (
     <div>
@@ -38,10 +66,7 @@ export function ProjectsPage() {
             Projects live inside an area and hold tasks.
           </p>
         </div>
-        <Button
-          onClick={() => setCreating(true)}
-          disabled={liveAreas.length === 0}
-        >
+        <Button onClick={() => setCreating(true)} disabled={!hasArea}>
           + New project
         </Button>
       </header>
@@ -55,90 +80,85 @@ export function ProjectsPage() {
         Show archived
       </label>
 
-      {liveAreas.length === 0 ? (
+      {!hasArea ? (
         <div className="rounded-xl border border-dashed border-line p-10 text-center text-muted">
-          Create an <Link to="/areas" className="text-ink hover:underline">area</Link>{" "}
+          Create an{" "}
+          <Link to="/areas" className="text-ink hover:underline">
+            area
+          </Link>{" "}
           first, then add projects to it.
         </div>
-      ) : visible.length === 0 ? (
+      ) : groups.length === 0 ? (
         <div className="rounded-xl border border-dashed border-line p-10 text-center text-muted">
-          No projects yet.
+          No projects yet. Click “+ New project” to add one.
         </div>
       ) : (
         <div className="flex flex-col gap-6">
-          {liveAreas.map((area) => {
-            const areaProjects = visible
-              .filter((p) => p.areaId === area.id)
-              .sort((a, b) => b.priority - a.priority);
-            if (areaProjects.length === 0) return null;
-            return (
-              <section key={area.id}>
-                <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold">
-                  <span aria-hidden>{iconEmoji(area.icon)}</span>
-                  <span style={{ color: area.color }}>{area.name}</span>
-                </h2>
-                <ul className="grid gap-3 sm:grid-cols-2">
-                  {areaProjects.map((project) => {
-                    const progress = progressOf(
-                      tasksInProject(tasks, project.id),
-                    );
-                    const secs = secondsForProject(timeLogs, project.id);
-                    const overdue =
-                      project.status !== "done" && isOverdue(project.dueDate);
-                    return (
-                      <li
-                        key={project.id}
-                        className="rounded-xl border border-line bg-surface p-4"
-                        style={{ borderTop: `3px solid ${area.color}` }}
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <Link
-                            to={`/projects/${project.id}`}
-                            className="font-medium hover:underline"
-                          >
-                            {project.name}
-                            {project.archived && (
-                              <span className="ml-2 text-xs text-muted">
-                                (archived)
-                              </span>
-                            )}
-                          </Link>
-                          <StatusBadge status={project.status} />
-                        </div>
-                        {project.dueDate && (
-                          <div
-                            className={`mt-1 text-xs ${overdue ? "font-medium text-red-600" : "text-muted"}`}
-                          >
-                            {countdownLabel(project.dueDate)}
-                          </div>
-                        )}
-                        <div className="mt-3">
-                          <div className="mb-1 flex justify-between text-xs text-muted">
-                            <span>
-                              {progress.done}/{progress.total} tasks
+          {groups.map((g) => (
+            <section key={g.areaId}>
+              <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold">
+                <span aria-hidden>{g.icon}</span>
+                <span style={{ color: g.color }}>{g.label}</span>
+              </h2>
+              <ul className="grid gap-3 sm:grid-cols-2">
+                {g.items.map((project) => {
+                  const progress = progressOf(tasksInProject(tasks, project.id));
+                  const secs = secondsForProject(timeLogs, project.id);
+                  const overdue =
+                    project.status !== "done" && isOverdue(project.dueDate);
+                  return (
+                    <li
+                      key={project.id}
+                      className="rounded-xl border border-line bg-surface p-4"
+                      style={{ borderTop: `3px solid ${g.color}` }}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <Link
+                          to={`/projects/${project.id}`}
+                          className="font-medium hover:underline"
+                        >
+                          {project.name}
+                          {project.archived && (
+                            <span className="ml-2 text-xs text-muted">
+                              (archived)
                             </span>
-                            <span>{progress.pct}%</span>
-                          </div>
-                          <div className="h-1.5 w-full overflow-hidden rounded-full bg-line">
-                            <div
-                              className="h-full rounded-full"
-                              style={{
-                                width: `${progress.pct}%`,
-                                backgroundColor: area.color,
-                              }}
-                            />
-                          </div>
+                          )}
+                        </Link>
+                        <StatusBadge status={project.status} />
+                      </div>
+                      {project.dueDate && (
+                        <div
+                          className={`mt-1 text-xs ${overdue ? "font-medium text-red-600" : "text-muted"}`}
+                        >
+                          {countdownLabel(project.dueDate)}
                         </div>
-                        <div className="mt-3 text-xs text-muted">
-                          {formatDuration(secs)} logged
+                      )}
+                      <div className="mt-3">
+                        <div className="mb-1 flex justify-between text-xs text-muted">
+                          <span>
+                            {progress.done}/{progress.total} tasks
+                          </span>
+                          <span>{progress.pct}%</span>
                         </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </section>
-            );
-          })}
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-line">
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${progress.pct}%`,
+                              backgroundColor: g.color,
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-3 text-xs text-muted">
+                        {formatDuration(secs)} logged
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ))}
         </div>
       )}
 
