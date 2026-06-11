@@ -27,19 +27,22 @@ export function watchAreas(
   onChange: (areas: Area[], meta: SnapMeta) => void,
   onError?: (err: Error) => void,
 ): () => void {
-  const q = query(
-    userCollection(uid, "areas"),
-    orderBy("order", "asc"),
-    orderBy("createdAt", "asc"),
-  );
+  // Order by a single field only — two orderBy fields would require a Firestore
+  // composite index (whose absence silently kills the realtime listener after
+  // the first cache read). We sort by order then createdAt in memory instead.
+  const q = query(userCollection(uid, "areas"), orderBy("order", "asc"));
   return onSnapshot(
     q,
     { includeMetadataChanges: true },
-    (snap) =>
-      onChange(snap.docs.map((d) => toArea(d.id, d.data())), {
+    (snap) => {
+      const areas = snap.docs
+        .map((d) => toArea(d.id, d.data()))
+        .sort((a, b) => a.order - b.order || a.createdAt - b.createdAt);
+      onChange(areas, {
         hasPendingWrites: snap.metadata.hasPendingWrites,
         fromCache: snap.metadata.fromCache,
-      }),
+      });
+    },
     (err) => onError?.(err),
   );
 }
