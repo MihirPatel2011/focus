@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useDataStore } from "@/logic/stores/dataStore";
 import { isInbox } from "@/logic/taskViews";
-import { isOverdue, isToday, formatDuration } from "@/lib/dates";
+import { isOverdue, formatDuration } from "@/lib/dates";
 import { TaskBoard } from "@/components/TaskBoard";
 
 /**
@@ -30,26 +30,33 @@ export function HomePage() {
       focusedToday,
       doneToday,
       overdue: open.filter((t) => isOverdue(t.dueDate)).length,
-      today: open.filter((t) => isToday(t.dueDate) || t.plannedFor).length,
       inbox: tasks.filter(isInbox).length,
     };
   }, [tasks, timeLogs]);
 
   return (
     <div>
-      <header className="mb-5">
-        <h1 className="text-2xl font-semibold">Today</h1>
-        <p className="text-sm text-muted">
+      <header className="mb-6">
+        <p className="label-caps mb-1">
           {new Date().toLocaleDateString(undefined, {
             weekday: "long",
             month: "long",
             day: "numeric",
           })}
         </p>
+        <div className="flex items-end justify-between gap-3">
+          <h1 className="page-title">Today</h1>
+          <Link
+            to="/focus"
+            className="hidden rounded-xl bg-ink/[0.06] px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:bg-ink/10 sm:block"
+          >
+            Start focus →
+          </Link>
+        </div>
       </header>
 
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Stat label="Focused today" value={formatDuration(stats.focusedToday)} />
+      <div className="mb-7 grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
+        <Stat label="Focused" value={formatDuration(stats.focusedToday)} />
         <Stat label="Done today" value={String(stats.doneToday)} />
         <Stat
           label="Overdue"
@@ -59,14 +66,24 @@ export function HomePage() {
         <Stat label="Inbox" value={String(stats.inbox)} to="/inbox" />
       </div>
 
-      <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-sm font-medium text-muted">Your tasks</h2>
-        <Link to="/focus" className="text-sm font-medium text-ink hover:underline">
-          Start focus →
-        </Link>
-      </div>
-
       <TaskBoard defaultView="all" />
+
+      {/* Mobile path to the rest of the app (kept off the tab bar). */}
+      <div className="mt-8 flex gap-2 md:hidden">
+        {[
+          { to: "/areas", label: "Areas" },
+          { to: "/projects", label: "Projects" },
+          { to: "/stats", label: "Stats" },
+        ].map((l) => (
+          <Link
+            key={l.to}
+            to={l.to}
+            className="flex-1 rounded-xl bg-ink/[0.05] px-3 py-2.5 text-center text-sm font-medium text-soft transition-colors hover:bg-ink/10 hover:text-ink"
+          >
+            {l.label}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
@@ -83,10 +100,12 @@ function Stat({
   danger?: boolean;
 }) {
   const body = (
-    <div className="rounded-xl border border-line bg-surface px-4 py-3">
-      <div className="text-xs text-muted">{label}</div>
+    <div className="card px-4 py-3.5 transition-shadow duration-200 hover:shadow-lift">
+      <div className="label-caps">{label}</div>
       <div
-        className={`mt-1 text-xl font-semibold tabular-nums ${danger ? "text-red-600" : ""}`}
+        className={`mt-1 font-mono text-[1.45rem] font-semibold leading-none tracking-tight tabular-nums ${
+          danger ? "text-[#b3361b]" : "text-ink"
+        }`}
       >
         {value}
       </div>

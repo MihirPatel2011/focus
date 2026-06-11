@@ -61,7 +61,7 @@ export function ProjectsPage() {
     <div>
       <header className="mb-5 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Projects</h1>
+          <h1 className="page-title">Projects</h1>
           <p className="text-sm text-muted">
             Projects live inside an area and hold tasks.
           </p>
@@ -81,7 +81,7 @@ export function ProjectsPage() {
       </label>
 
       {!hasArea ? (
-        <div className="rounded-xl border border-dashed border-line p-10 text-center text-muted">
+        <div className="rounded-2xl border border-dashed border-line2/70 px-6 py-14 text-center text-sm text-muted">
           Create an{" "}
           <Link to="/areas" className="text-ink hover:underline">
             area
@@ -89,7 +89,7 @@ export function ProjectsPage() {
           first, then add projects to it.
         </div>
       ) : groups.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-line p-10 text-center text-muted">
+        <div className="rounded-2xl border border-dashed border-line2/70 px-6 py-14 text-center text-sm text-muted">
           No projects yet. Click “+ New project” to add one.
         </div>
       ) : (
@@ -109,7 +109,7 @@ export function ProjectsPage() {
                   return (
                     <li
                       key={project.id}
-                      className="rounded-xl border border-line bg-surface p-4"
+                      className="card p-4 transition-shadow duration-200 hover:shadow-lift"
                       style={{ borderTop: `3px solid ${g.color}` }}
                     >
                       <div className="flex items-start justify-between gap-2">
@@ -128,7 +128,7 @@ export function ProjectsPage() {
                       </div>
                       {project.dueDate && (
                         <div
-                          className={`mt-1 text-xs ${overdue ? "font-medium text-red-600" : "text-muted"}`}
+                          className={`mt-1 text-xs ${overdue ? "font-medium text-[#b3361b]" : "text-muted"}`}
                         >
                           {countdownLabel(project.dueDate)}
                         </div>

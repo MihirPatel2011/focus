@@ -4,7 +4,7 @@ export function TasksPage() {
   return (
     <div>
       <header className="mb-4">
-        <h1 className="text-2xl font-semibold">Tasks</h1>
+        <h1 className="page-title">Tasks</h1>
         <p className="text-sm text-muted">
           Filter, group, and sort across all your tasks.
         </p>

@@ -48,7 +48,7 @@ export function InboxRow({
   );
 
   return (
-    <li className="flex flex-col gap-2 rounded-xl border border-line bg-surface p-3 sm:flex-row sm:items-center">
+    <li className="flex flex-col gap-2 card p-3 sm:flex-row sm:items-center">
       {/* Title */}
       <input
         value={title}
@@ -69,7 +69,7 @@ export function InboxRow({
           onChange={(e) =>
             onPatch({ urgency: Number(e.target.value) as Urgency })
           }
-          className="rounded-md border border-line bg-canvas px-2 py-1 text-xs outline-none focus:border-ink"
+          className="select-pill"
           style={{ color: URGENCY_LABELS[task.urgency].color }}
           aria-label="Urgency"
           title="Urgency"
@@ -88,7 +88,7 @@ export function InboxRow({
           onChange={(e) =>
             onPatch({ dueDate: e.target.value || undefined })
           }
-          className="rounded-md border border-line bg-canvas px-2 py-1 text-xs outline-none focus:border-ink"
+          className="select-pill"
           aria-label="Due date"
           title="Due date"
         />
@@ -100,7 +100,7 @@ export function InboxRow({
             onChange={(e) =>
               onPatch({ projectId: e.target.value || undefined })
             }
-            className="rounded-md border border-line bg-canvas px-2 py-1 text-xs outline-none focus:border-ink"
+            className="select-pill"
             aria-label="Project"
             title="Project"
           >
@@ -123,7 +123,7 @@ export function InboxRow({
               projectId: e.target.value ? task.projectId : undefined,
             })
           }
-          className="rounded-md border border-line bg-canvas px-2 py-1 text-xs font-medium outline-none focus:border-ink"
+          className="select-pill"
           aria-label="Area"
           title="Assign an area to clarify this task"
         >
@@ -137,7 +137,7 @@ export function InboxRow({
 
         <button
           onClick={onDelete}
-          className="rounded-md px-2 py-1 text-xs text-muted hover:text-red-600"
+          className="rounded-md px-2 py-1 text-xs text-muted hover:text-[#b3361b]"
           aria-label="Delete task"
           title="Delete"
         >

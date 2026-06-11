@@ -1,35 +1,316 @@
 @import "tailwindcss";
+@import "@fontsource-variable/outfit";
+@import "@fontsource-variable/fraunces";
 
-/* Calm, minimal design tokens. Theme is intentionally restrained — color in the
-   UI comes from per-area accent colors, not from the chrome. */
+/*
+ * Focus design system — warm paper & ink.
+ *
+ * One neutral family (warm stone), one chrome accent (ember), and the user's
+ * per-area colors as the only other hues. Type: Fraunces (display serif) for
+ * titles/wordmark, Outfit (geometric sans) for UI. Shadows are tinted with the
+ * ink hue, never pure black. Color in the UI comes from the user's areas.
+ */
 @theme {
-  --color-ink: #0f172a; /* slate-900 — primary text / dark surfaces */
-  --color-muted: #64748b; /* slate-500 — secondary text */
-  --color-line: #e2e8f0; /* slate-200 — borders */
-  --color-surface: #ffffff;
-  --color-canvas: #f8fafc; /* slate-50 — app background */
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif;
+  /* Surfaces */
+  --color-canvas: #f4f1ea; /* warm paper */
+  --color-surface: #fdfcf8; /* raised card */
+  --color-sunken: #ece8df; /* wells, inputs */
+
+  /* Ink scale (warm) */
+  --color-ink: #1f1b16;
+  --color-soft: #57514a; /* secondary text */
+  --color-muted: #8d857a; /* tertiary text */
+  --color-line: #e3ddd1; /* hairlines */
+  --color-line2: #cfc7b8; /* stronger hairline / controls */
+
+  /* Single chrome accent — warm ember. Area colors carry everything else. */
+  --color-ember: #c2410c;
+
+  --font-sans: "Outfit Variable", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-display: "Fraunces Variable", "Iowan Old Style", Georgia, serif;
+
+  /* Ink-tinted shadows, one light source (top). */
+  --shadow-soft: 0 1px 2px rgb(31 27 22 / 0.05),
+    0 8px 24px -12px rgb(31 27 22 / 0.14);
+  --shadow-lift: 0 2px 4px rgb(31 27 22 / 0.06),
+    0 16px 40px -16px rgb(31 27 22 / 0.22);
+  --shadow-pop: 0 24px 64px -16px rgb(31 27 22 / 0.32);
+
+  --radius-card: 1.125rem;
+
+  --animate-rise: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-pop: pop 0.35s cubic-bezier(0.22, 1.4, 0.36, 1) both;
+  --animate-fade: fade 0.3s ease both;
+  --animate-breathe: breathe 2.6s ease-in-out infinite;
 }
 
-html,
-body,
-#root {
-  height: 100%;
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.82);
+  }
 }
 
-body {
-  margin: 0;
-  background: var(--color-canvas);
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* iOS safe areas for the eventual Capacitor wrap. */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) 0
+      env(safe-area-inset-left);
+    overscroll-behavior-y: none;
+  }
+
+  /* Subtle paper grain — breaks digital flatness without being visible as such. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    pointer-events: none;
+    opacity: 0.028;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-ember) 22%, transparent);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible, consistent keyboard focus. */
+  :focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--color-ink) 55%, transparent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* Custom circular checkboxes everywhere — the core "done" interaction. */
+  input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    border-radius: 9999px;
+    border: 1.5px solid var(--color-line2);
+    background: var(--color-surface);
+    display: inline-grid;
+    place-content: center;
+    cursor: pointer;
+    transition:
+      background 0.18s ease,
+      border-color 0.18s ease,
+      transform 0.12s ease;
+  }
+  input[type="checkbox"]:hover {
+    border-color: var(--color-muted);
+  }
+  input[type="checkbox"]:active {
+    transform: scale(0.88);
+  }
+  input[type="checkbox"]:checked {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+  }
+  input[type="checkbox"]:checked::after {
+    content: "";
+    width: 0.55rem;
+    height: 0.32rem;
+    margin-top: -2px;
+    border-left: 2px solid var(--color-canvas);
+    border-bottom: 2px solid var(--color-canvas);
+    transform: rotate(-45deg);
+  }
+
+  /* Keep Chrome's autofill from painting inputs blue. */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px var(--color-sunken) inset;
+    -webkit-text-fill-color: var(--color-ink);
+    caret-color: var(--color-ink);
+    border-radius: 0.75rem;
+  }
+
+  /* Prevent iOS Safari auto-zoom on focus (it zooms when inputs are <16px). */
+  @media (max-width: 767px) {
+    input:not([type="checkbox"]),
+    select,
+    textarea {
+      font-size: 16px;
+    }
+  }
+
+  /* Calm scrollbars. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line2) transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 40;
+}
+
+@utility page-title {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 40;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  font-size: 1.75rem;
+  line-height: 1.15;
+}
+
+@utility label-caps {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Raised card surface — no border+shadow double-up; shadow does the work. */
+@utility card {
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  box-shadow:
+    inset 0 0 0 1px rgb(31 27 22 / 0.04),
+    var(--shadow-soft);
+}
+
+@utility input-base {
+  width: 100%;
+  border-radius: 0.75rem;
+  background: var(--color-sunken);
+  border: 1px solid transparent;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
   color: var(--color-ink);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  /* Respect iOS safe areas for the eventual Capacitor wrap. */
-  padding: env(safe-area-inset-top) env(safe-area-inset-right)
-    env(safe-area-inset-bottom) env(safe-area-inset-left);
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.input-base::placeholder {
+  color: var(--color-muted);
+}
+.input-base:focus {
+  background: var(--color-surface);
+  border-color: var(--color-line2);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ink) 7%, transparent);
 }
 
-/* Thin, calm scrollbars. */
-* {
-  scrollbar-width: thin;
+/* Tiny pill select used inline on rows. */
+@utility select-pill {
+  border-radius: 0.625rem;
+  background: transparent;
+  border: 1px solid var(--color-line);
+  padding: 0.3rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-soft);
+  outline: none;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+.select-pill:hover {
+  border-color: var(--color-line2);
+  background: var(--color-surface);
+}
+.select-pill:focus {
+  border-color: var(--color-line2);
+}
+
+/* Checkbox variant for dark surfaces (focus overlay). */
+@layer components {
+  .check-light {
+    border-color: rgb(255 255 255 / 0.32);
+    background: transparent;
+  }
+  .check-light:hover {
+    border-color: rgb(255 255 255 / 0.6);
+  }
+  .check-light:checked {
+    background: #f4f1ea;
+    border-color: #f4f1ea;
+  }
+  .check-light:checked::after {
+    border-color: #1f1b16;
+  }
+}
+
+@utility kbd {
+  display: inline-block;
+  border-radius: 0.375rem;
+  border: 1px solid var(--color-line);
+  border-bottom-width: 2px;
+  background: var(--color-surface);
+  padding: 0.1rem 0.4rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.6875rem;
+  color: var(--color-soft);
 }

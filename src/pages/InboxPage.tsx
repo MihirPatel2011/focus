@@ -30,7 +30,7 @@ export function InboxPage() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold">Inbox</h1>
+        <h1 className="page-title">Inbox</h1>
         <p className="text-sm text-muted">
           {inbox.length > 0
             ? `${inbox.length} task${inbox.length === 1 ? "" : "s"} to clarify — assign an area to file each one.`
@@ -39,9 +39,9 @@ export function InboxPage() {
       </header>
 
       {inbox.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-line p-10 text-center text-muted">
+        <div className="rounded-2xl border border-dashed border-line2/70 px-6 py-14 text-center text-sm text-muted">
           🎉 Inbox zero. Capture something with “+ Quick add” or the{" "}
-          <kbd className="rounded bg-line px-1">n</kbd> key.
+          <kbd className="kbd">n</kbd> key.
         </div>
       ) : (
         <ul className="flex flex-col gap-2">

@@ -64,20 +64,20 @@ function TimerSetup() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold">Focus</h1>
+        <h1 className="page-title">Focus</h1>
         <p className="text-sm text-muted">
           Pick one area, an optional project, and the tasks you'll work on.
         </p>
       </header>
 
       {areas.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-line p-10 text-center text-muted">
+        <div className="rounded-2xl border border-dashed border-line2/70 px-6 py-14 text-center text-sm text-muted">
           Create an area first, then come back to start a focus session.
         </div>
       ) : (
         <div className="flex flex-col gap-5">
           <label className="text-sm">
-            <span className="mb-1 block text-xs font-medium text-muted">
+            <span className="label-caps mb-1.5 block">
               Area
             </span>
             <select
@@ -87,7 +87,7 @@ function TimerSetup() {
                 setProjectId("");
                 setSelected([]);
               }}
-              className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-ink"
+              className="input-base"
             >
               <option value="">— choose an area —</option>
               {areas.map((a) => (
@@ -100,7 +100,7 @@ function TimerSetup() {
 
           {areaId && areaProjects.length > 0 && (
             <label className="text-sm">
-              <span className="mb-1 block text-xs font-medium text-muted">
+              <span className="label-caps mb-1.5 block">
                 Project (optional)
               </span>
               <select
@@ -109,7 +109,7 @@ function TimerSetup() {
                   setProjectId(e.target.value);
                   setSelected([]);
                 }}
-                className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-ink"
+                className="input-base"
               >
                 <option value="">— none —</option>
                 {areaProjects.map((p) => (
@@ -123,7 +123,7 @@ function TimerSetup() {
 
           {areaId && (
             <div>
-              <div className="mb-1 text-xs font-medium text-muted">
+              <div className="label-caps mb-1.5">
                 Tasks to work on
               </div>
               {candidates.length === 0 ? (
@@ -134,7 +134,7 @@ function TimerSetup() {
                 <ul className="flex flex-col gap-1">
                   {candidates.map((t) => (
                     <li key={t.id}>
-                      <label className="flex items-center gap-2 rounded-lg border border-line bg-surface px-3 py-2 text-sm">
+                      <label className="flex items-center gap-2 card px-3 py-2 text-sm">
                         <input
                           type="checkbox"
                           checked={selected.includes(t.id)}

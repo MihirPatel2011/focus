@@ -22,10 +22,7 @@ export function ShortcutsHelp({
                     then
                   </span>
                 ) : (
-                  <kbd
-                    key={j}
-                    className="rounded border border-line bg-canvas px-1.5 py-0.5 font-mono text-xs"
-                  >
+                  <kbd key={j} className="kbd">
                     {k}
                   </kbd>
                 ),

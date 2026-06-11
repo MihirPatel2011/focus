@@ -25,12 +25,12 @@ export function PlanPage() {
     <div>
       <header className="mb-4 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Plan</h1>
+          <h1 className="page-title">Plan</h1>
           <p className="text-sm text-muted">
             Lay out what you intend to do, then focus on it.
           </p>
         </div>
-        <div className="flex gap-1 rounded-full bg-line/50 p-1">
+        <div className="flex gap-1 rounded-full bg-sunken p-1">
           {(["today", "week"] as Mode[]).map((m) => (
             <button
               key={m}
@@ -80,7 +80,7 @@ function TodayView() {
     <div className="flex flex-col gap-6">
       <section>
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-sm font-medium text-muted">
+          <h2 className="label-caps">
             Today · {formatDateLabel(today)}
           </h2>
           {planned.length > 0 && (
@@ -91,7 +91,7 @@ function TodayView() {
         </div>
 
         {planned.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-line p-8 text-center text-sm text-muted">
+          <div className="rounded-2xl border border-dashed border-line2/70 px-6 py-12 text-center text-sm text-muted">
             Nothing planned for today. Pull tasks from your backlog below.
           </div>
         ) : (
@@ -99,7 +99,7 @@ function TodayView() {
             {planned.map((task) => (
               <li
                 key={task.id}
-                className="flex items-center gap-3 rounded-xl border border-line bg-surface px-3 py-2.5"
+                className="flex items-center gap-3 card px-3 py-2.5"
                 style={
                   selectArea(areas, task.areaId)
                     ? {
@@ -134,14 +134,14 @@ function TodayView() {
                 </div>
                 <button
                   onClick={() => focusTask(task)}
-                  className="rounded-md bg-line/60 px-2 py-1 text-xs font-medium hover:bg-line"
+                  className="rounded-lg bg-ink/[0.06] px-2.5 py-1.5 text-xs font-semibold text-ink transition-colors hover:bg-ink/10"
                   title="Start a focus session on this task"
                 >
                   Focus
                 </button>
                 <button
                   onClick={() => setPlan(task, undefined)}
-                  className="text-xs text-muted hover:text-red-600"
+                  className="text-xs text-muted hover:text-[#b3361b]"
                   title="Remove from today"
                 >
                   ✕
@@ -153,7 +153,7 @@ function TodayView() {
       </section>
 
       <section>
-        <h2 className="mb-2 text-sm font-medium text-muted">Backlog</h2>
+        <h2 className="label-caps mb-2">Backlog</h2>
         {backlog.length === 0 ? (
           <p className="text-sm text-muted">
             No actionable tasks — everything is planned, done, or still in your
@@ -164,7 +164,7 @@ function TodayView() {
             {backlog.map((task) => (
               <li
                 key={task.id}
-                className="flex items-center gap-3 rounded-lg border border-line bg-surface px-3 py-2 text-sm"
+                className="flex items-center gap-3 card px-3 py-2 text-sm"
               >
                 <span
                   className="inline-block h-2 w-2 shrink-0 rounded-full"
@@ -181,7 +181,7 @@ function TodayView() {
                 )}
                 <button
                   onClick={() => setPlan(task, today)}
-                  className="rounded-md bg-ink px-2 py-1 text-xs font-medium text-white hover:bg-slate-700"
+                  className="rounded-md bg-ink px-2 py-1 text-xs font-medium text-white hover:opacity-90"
                 >
                   + Today
                 </button>
@@ -260,7 +260,7 @@ function WeekView() {
                       </span>
                       <button
                         onClick={() => setPlan(task, undefined)}
-                        className="text-muted opacity-0 group-hover:opacity-100 hover:text-red-600"
+                        className="text-muted opacity-0 group-hover:opacity-100 hover:text-[#b3361b]"
                         title="Unplan"
                       >
                         ✕
@@ -275,7 +275,7 @@ function WeekView() {
       </div>
 
       <section>
-        <h2 className="mb-2 text-sm font-medium text-muted">
+        <h2 className="label-caps mb-2">
           Backlog — assign to a day
         </h2>
         {backlog.length === 0 ? (
@@ -285,7 +285,7 @@ function WeekView() {
             {backlog.map((task) => (
               <li
                 key={task.id}
-                className="flex flex-col gap-2 rounded-lg border border-line bg-surface px-3 py-2 text-sm sm:flex-row sm:items-center"
+                className="flex flex-col gap-2 card px-3 py-2 text-sm sm:flex-row sm:items-center"
               >
                 <span className="min-w-0 flex-1 truncate">
                   <span
@@ -305,7 +305,7 @@ function WeekView() {
                       className={`h-7 w-7 rounded-md text-xs font-medium ${
                         day.isToday
                           ? "bg-ink/10 text-ink"
-                          : "bg-line/50 text-muted hover:bg-line"
+                          : "bg-ink/[0.05] text-muted hover:bg-ink/10 hover:text-ink"
                       }`}
                       title={`Plan for ${day.weekday} ${day.dayOfMonth}`}
                     >

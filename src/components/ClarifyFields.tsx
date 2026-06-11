@@ -8,10 +8,10 @@ export interface ClarifyValues {
 }
 
 export const URGENCY_LABELS: Record<Urgency, { label: string; color: string }> = {
-  1: { label: "Low", color: "#65a30d" },
-  2: { label: "Medium", color: "#d97706" },
-  3: { label: "High", color: "#ea580c" },
-  4: { label: "Urgent", color: "#dc2626" },
+  1: { label: "Low", color: "#7d8a4e" },
+  2: { label: "Medium", color: "#b07d2e" },
+  3: { label: "High", color: "#c2410c" },
+  4: { label: "Urgent", color: "#b3361b" },
 };
 
 /** Shared editing controls for area / project / urgency / due date. */
@@ -33,7 +33,7 @@ export function ClarifyFields({
   return (
     <div className="flex flex-col gap-4">
       <label className="text-sm">
-        <span className="mb-1 block text-xs font-medium text-muted">Area</span>
+        <span className="label-caps mb-1.5 block">Area</span>
         <select
           value={values.areaId ?? ""}
           onChange={(e) =>
@@ -43,7 +43,7 @@ export function ClarifyFields({
               projectId: undefined,
             })
           }
-          className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+          className="input-base"
         >
           <option value="">— none —</option>
           {areas
@@ -58,15 +58,13 @@ export function ClarifyFields({
 
       {values.areaId && areaProjects.length > 0 && (
         <label className="text-sm">
-          <span className="mb-1 block text-xs font-medium text-muted">
-            Project (optional)
-          </span>
+          <span className="label-caps mb-1.5 block">Project</span>
           <select
             value={values.projectId ?? ""}
             onChange={(e) =>
               onChange({ ...values, projectId: e.target.value || undefined })
             }
-            className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+            className="input-base"
           >
             <option value="">— none —</option>
             {areaProjects.map((p) => (
@@ -79,8 +77,8 @@ export function ClarifyFields({
       )}
 
       <div className="text-sm">
-        <span className="mb-1 block text-xs font-medium text-muted">Urgency</span>
-        <div className="flex gap-2">
+        <span className="label-caps mb-1.5 block">Urgency</span>
+        <div className="grid grid-cols-4 gap-1 rounded-xl bg-sunken p-1">
           {([1, 2, 3, 4] as Urgency[]).map((u) => {
             const active = values.urgency === u;
             const { label, color } = URGENCY_LABELS[u];
@@ -89,12 +87,10 @@ export function ClarifyFields({
                 type="button"
                 key={u}
                 onClick={() => onChange({ ...values, urgency: u })}
-                className="flex-1 rounded-lg border px-2 py-1.5 text-xs font-medium"
-                style={{
-                  borderColor: active ? color : "var(--color-line)",
-                  backgroundColor: active ? `${color}1a` : "transparent",
-                  color: active ? color : "var(--color-muted)",
-                }}
+                className={`rounded-lg px-1 py-1.5 text-xs font-semibold transition-all duration-150 ${
+                  active ? "bg-surface shadow-soft" : "text-muted hover:text-soft"
+                }`}
+                style={active ? { color } : undefined}
               >
                 {label}
               </button>
@@ -104,16 +100,14 @@ export function ClarifyFields({
       </div>
 
       <label className="text-sm">
-        <span className="mb-1 block text-xs font-medium text-muted">
-          Due date (optional)
-        </span>
+        <span className="label-caps mb-1.5 block">Due date</span>
         <input
           type="date"
           value={values.dueDate ?? ""}
           onChange={(e) =>
             onChange({ ...values, dueDate: e.target.value || undefined })
           }
-          className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+          className="input-base"
         />
       </label>
     </div>

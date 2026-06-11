@@ -72,13 +72,13 @@ export function ProjectDetailPage() {
       </Link>
 
       <header
-        className="mt-2 mb-6 rounded-2xl border border-line bg-surface p-5"
+        className="mt-2 mb-6 card p-5"
         style={{ borderLeft: `5px solid ${color}` }}
       >
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-semibold">{project.name}</h1>
+              <h1 className="page-title">{project.name}</h1>
               <StatusBadge status={project.status} />
             </div>
             {project.description && (
@@ -87,7 +87,7 @@ export function ProjectDetailPage() {
             {project.dueDate && (
               <p
                 className={`mt-1 text-sm ${
-                  overdue ? "font-medium text-red-600" : "text-muted"
+                  overdue ? "font-medium text-[#b3361b]" : "text-muted"
                 }`}
               >
                 Due {project.dueDate} · {countdownLabel(project.dueDate)}
@@ -143,7 +143,7 @@ export function ProjectDetailPage() {
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           placeholder="Add a task to this project…"
-          className="flex-1 rounded-lg border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-ink"
+          className="flex-1 card px-3 py-2 text-sm outline-none focus:border-ink"
         />
         <Button type="submit" disabled={!newTitle.trim()}>
           Add
@@ -152,7 +152,7 @@ export function ProjectDetailPage() {
 
       {/* Tasks */}
       {projectTasks.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-line p-8 text-center text-sm text-muted">
+        <div className="rounded-2xl border border-dashed border-line2/70 px-6 py-12 text-center text-sm text-muted">
           No tasks in this project yet.
         </div>
       ) : (
@@ -160,7 +160,7 @@ export function ProjectDetailPage() {
           {[...open, ...done].map((t) => (
             <li
               key={t.id}
-              className="flex items-center gap-3 rounded-lg border border-line bg-surface px-3 py-2 text-sm"
+              className="flex items-center gap-3 card px-3 py-2 text-sm"
             >
               <input
                 type="checkbox"

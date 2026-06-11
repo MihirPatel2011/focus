@@ -12,10 +12,14 @@ export function AreaBadge({ area, className = "" }: { area?: Area; className?: s
   }
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${className}`}
-      style={{ backgroundColor: `${area.color}1a`, color: area.color }}
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${className}`}
+      style={{
+        backgroundColor: `${area.color}14`,
+        color: area.color,
+        boxShadow: `inset 0 0 0 1px ${area.color}26`,
+      }}
     >
-      <span aria-hidden>{iconEmoji(area.icon)}</span>
+      <span aria-hidden className="text-[11px]">{iconEmoji(area.icon)}</span>
       {area.name}
     </span>
   );

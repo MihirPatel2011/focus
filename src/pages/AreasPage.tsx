@@ -30,7 +30,7 @@ export function AreasPage() {
     <div>
       <header className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Areas</h1>
+          <h1 className="page-title">Areas</h1>
           <p className="text-sm text-muted">
             Your life focuses — color-coded across the whole app.
           </p>
@@ -56,7 +56,7 @@ export function AreasPage() {
             return (
               <li
                 key={area.id}
-                className="rounded-xl border border-line bg-surface p-4"
+                className="card p-4 transition-shadow duration-200 hover:shadow-lift"
                 style={{ borderLeft: `4px solid ${area.color}` }}
               >
                 <div className="flex items-start justify-between">
@@ -129,7 +129,7 @@ export function AreasPage() {
 
 function Empty({ onCreate }: { onCreate: () => void }) {
   return (
-    <div className="rounded-xl border border-dashed border-line p-10 text-center">
+    <div className="rounded-2xl border border-dashed border-line2/70 px-6 py-14 text-center">
       <p className="text-muted">No areas yet.</p>
       <Button className="mt-3" onClick={onCreate}>
         Create your first area
@@ -195,17 +195,17 @@ function AreaForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Area name (e.g. Business)"
-          className="rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+          className="input-base"
         />
         <input
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Description (optional)"
-          className="rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+          className="input-base"
         />
 
         <div>
-          <div className="mb-1 text-xs font-medium text-muted">Color</div>
+          <div className="label-caps mb-1.5">Color</div>
           <div className="flex flex-wrap gap-2">
             {AREA_COLORS.map((c) => (
               <button
@@ -223,7 +223,7 @@ function AreaForm({
         </div>
 
         <div>
-          <div className="mb-1 text-xs font-medium text-muted">Icon</div>
+          <div className="label-caps mb-1.5">Icon</div>
           <div className="flex flex-wrap gap-1">
             {AREA_ICONS.map((i) => (
               <button
@@ -242,7 +242,7 @@ function AreaForm({
         </div>
 
         <label className="text-sm">
-          <span className="mb-1 block text-xs font-medium text-muted">
+          <span className="label-caps mb-1.5 block">
             Weekly time goal (hours, optional)
           </span>
           <input
@@ -252,7 +252,7 @@ function AreaForm({
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
             placeholder="e.g. 10"
-            className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+            className="input-base"
           />
         </label>
 

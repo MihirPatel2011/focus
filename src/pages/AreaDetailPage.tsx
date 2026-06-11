@@ -54,7 +54,7 @@ export function AreaDetailPage() {
       </Link>
 
       <header
-        className="mt-2 mb-6 rounded-2xl border border-line bg-surface p-5"
+        className="mt-2 mb-6 card p-5"
         style={{ borderLeft: `5px solid ${area.color}` }}
       >
         <div className="flex items-center gap-3">
@@ -62,7 +62,7 @@ export function AreaDetailPage() {
             {iconEmoji(area.icon)}
           </span>
           <div>
-            <h1 className="text-2xl font-semibold">{area.name}</h1>
+            <h1 className="page-title">{area.name}</h1>
             {area.description && (
               <p className="text-sm text-muted">{area.description}</p>
             )}
@@ -90,7 +90,7 @@ export function AreaDetailPage() {
       {/* Projects */}
       <section className="mb-8">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-medium text-muted">Projects</h2>
+          <h2 className="label-caps">Projects</h2>
           <div className="flex items-center gap-3">
             <label className="flex items-center gap-1 text-xs text-muted">
               <input
@@ -107,7 +107,7 @@ export function AreaDetailPage() {
         </div>
 
         {areaProjects.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-line p-8 text-center text-sm text-muted">
+          <div className="rounded-2xl border border-dashed border-line2/70 px-6 py-12 text-center text-sm text-muted">
             No projects yet in this area.
           </div>
         ) : (
@@ -130,7 +130,7 @@ export function AreaDetailPage() {
 
       {/* Open tasks in this area */}
       <section>
-        <h2 className="mb-3 text-sm font-medium text-muted">Open tasks</h2>
+        <h2 className="label-caps mb-3">Open tasks</h2>
         {openTasks.length === 0 ? (
           <p className="text-sm text-muted">No open tasks in this area.</p>
         ) : (
@@ -138,7 +138,7 @@ export function AreaDetailPage() {
             {openTasks.map((t) => (
               <li
                 key={t.id}
-                className="flex items-center gap-3 rounded-lg border border-line bg-surface px-3 py-2 text-sm"
+                className="flex items-center gap-3 card px-3 py-2 text-sm"
               >
                 <span
                   className="inline-block h-2 w-2 shrink-0 rounded-full"
@@ -180,7 +180,7 @@ function ProjectCard({
 
   return (
     <li
-      className="rounded-xl border border-line bg-surface p-4"
+      className="card p-4 transition-shadow duration-200 hover:shadow-lift"
       style={{ borderTop: `3px solid ${color}` }}
     >
       <div className="flex items-start justify-between gap-2">
@@ -199,7 +199,7 @@ function ProjectCard({
       {project.dueDate && (
         <div
           className={`mt-1 text-xs ${
-            overdue ? "font-medium text-red-600" : "text-muted"
+            overdue ? "font-medium text-[#b3361b]" : "text-muted"
           }`}
         >
           {countdownLabel(project.dueDate)}

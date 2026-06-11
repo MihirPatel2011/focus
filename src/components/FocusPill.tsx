@@ -20,24 +20,26 @@ export function FocusPill() {
   if (status === "idle" || !minimized) return null;
 
   const area = selectArea(areas, areaId);
-  const accent = area?.color ?? "#0f172a";
+  const accent = area?.color ?? "#c2410c";
 
   return (
     <button
       onClick={() => setMinimized(false)}
-      className="fixed bottom-20 right-4 z-50 flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-white shadow-lg md:bottom-6"
+      className="animate-pop fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] left-4 z-50 flex items-center gap-2.5 rounded-full bg-ink py-2 pl-3.5 pr-4 text-sm font-medium text-canvas shadow-lift transition-transform duration-200 hover:-translate-y-0.5 active:scale-95 md:bottom-6 md:left-auto md:right-6"
       title="Return to focus mode"
     >
       <span
         className={`inline-block h-2.5 w-2.5 rounded-full ${
-          status === "running" ? "animate-pulse" : ""
+          status === "running" ? "animate-breathe" : ""
         }`}
         style={{ backgroundColor: accent }}
       />
       <span className="font-mono tabular-nums">
         {formatDuration(elapsedSeconds(now))}
       </span>
-      <span className="text-white/60">{status === "paused" ? "Paused" : "Focus"}</span>
+      <span className="text-canvas/55">
+        {status === "paused" ? "paused" : "focusing"}
+      </span>
     </button>
   );
 }

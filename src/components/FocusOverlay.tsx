@@ -10,10 +10,9 @@ import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 
 /**
- * Distraction-free focus mode. Rendered globally (from AppShell) as a
- * full-screen takeover whenever a session is running and not minimized — large
- * timer, current tasks, minimal chrome. Also hosts the idle "Still working?"
- * nudge and the stop/reflection flow.
+ * Distraction-free focus mode: a full-screen warm-black room tinted with the
+ * area's color. Large timer, current tasks, minimal chrome. Hosts the idle
+ * "Still working?" nudge and the stop/reflection flow.
  */
 export function FocusOverlay() {
   const uid = useUid();
@@ -37,7 +36,6 @@ export function FocusOverlay() {
     cancel,
   } = useTimerStore();
 
-  // Tick every second while running so the clock and idle check stay live.
   const now = useTicker(status === "running");
   const seconds = elapsedSeconds(now);
   const idle = status === "running" && shouldNudge(lastInteraction, now);
@@ -65,79 +63,105 @@ export function FocusOverlay() {
     }
   }
 
-  const accent = area?.color ?? "#0f172a";
+  const accent = area?.color ?? "#c2410c";
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 text-center"
+      className="animate-fade fixed inset-0 z-50 flex flex-col items-center justify-center px-6 pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] text-center"
       style={{
-        // Calm wash of the area's color over a near-black canvas.
-        background: `radial-gradient(120% 120% at 50% 0%, ${accent}22 0%, #0b1220 60%, #070b14 100%)`,
-        color: "#f8fafc",
+        background: `radial-gradient(110% 90% at 50% -10%, ${accent}2e 0%, #14110d 55%, #0c0a07 100%)`,
+        color: "#f4f1ea",
       }}
     >
-      {/* Minimal top chrome: minimize only. */}
+      {/* Grain to keep the dark room from feeling flat. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.05]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+        }}
+      />
+
       <button
         onClick={() => setMinimized(true)}
-        className="absolute right-5 top-5 rounded-lg px-3 py-1.5 text-xs text-white/70 hover:bg-white/10 hover:text-white"
-        title="Minimize (keeps the timer running)"
+        className="absolute right-5 top-[max(1.25rem,env(safe-area-inset-top))] rounded-xl px-3.5 py-2 text-xs font-medium text-white/55 transition-colors hover:bg-white/10 hover:text-white"
+        title="Minimize — keeps the timer running"
       >
         Minimize ↘
       </button>
 
       {area && (
-        <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm">
-          <span aria-hidden>{area ? "●" : ""}</span>
-          <span style={{ color: accent }}>{area.name}</span>
+        <div className="animate-rise mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 py-1.5 text-sm backdrop-blur">
+          <span
+            aria-hidden
+            className={`inline-block h-2 w-2 rounded-full ${
+              status === "running" ? "animate-breathe" : ""
+            }`}
+            style={{ backgroundColor: accent }}
+          />
+          <span className="font-medium text-white/85">{area.name}</span>
         </div>
       )}
 
-      <div className="font-mono text-7xl font-semibold tabular-nums md:text-8xl">
+      <div
+        className="animate-rise font-mono text-[clamp(4.5rem,18vw,8.5rem)] font-light leading-none tracking-tight tabular-nums"
+        style={{ animationDelay: "60ms", textShadow: `0 0 80px ${accent}45` }}
+      >
         {formatDuration(seconds)}
       </div>
-      <div className="mt-2 text-sm uppercase tracking-widest text-white/50">
+      <div className="mt-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-white/40">
         {status === "paused" ? "Paused" : "Focusing"}
       </div>
 
-      <div className="mt-8 flex gap-3">
+      <div
+        className="animate-rise mt-9 flex gap-3"
+        style={{ animationDelay: "120ms" }}
+      >
         {status === "running" ? (
           <button
             onClick={pause}
-            className="rounded-xl bg-white/10 px-6 py-2.5 font-medium hover:bg-white/20"
+            className="min-w-28 rounded-2xl border border-white/10 bg-white/[0.08] px-6 py-3 font-medium backdrop-blur transition-all duration-200 hover:bg-white/[0.14] active:scale-[0.97]"
           >
             Pause
           </button>
         ) : (
           <button
             onClick={resume}
-            className="rounded-xl px-6 py-2.5 font-medium text-ink"
-            style={{ backgroundColor: "#f8fafc" }}
+            className="min-w-28 rounded-2xl bg-[#f4f1ea] px-6 py-3 font-semibold text-[#1f1b16] transition-all duration-200 hover:opacity-90 active:scale-[0.97]"
           >
             Resume
           </button>
         )}
         <button
           onClick={() => setShowStop(true)}
-          className="rounded-xl bg-red-500/90 px-6 py-2.5 font-medium hover:bg-red-500"
+          className="min-w-28 rounded-2xl border border-white/10 bg-white/[0.04] px-6 py-3 font-medium text-white/80 backdrop-blur transition-all duration-200 hover:border-[#e0654a]/40 hover:bg-[#b3361b]/25 hover:text-white active:scale-[0.97]"
         >
           Stop
         </button>
       </div>
 
       {sessionTasks.length > 0 && (
-        <ul className="mt-10 w-full max-w-sm text-left">
+        <ul
+          className="animate-rise mt-11 w-full max-w-sm text-left"
+          style={{ animationDelay: "180ms" }}
+        >
           {sessionTasks.map((t) => {
             const done = completedTaskIds.includes(t.id);
             return (
               <li key={t.id} className="mb-2">
-                <label className="flex items-center gap-3 rounded-xl bg-white/5 px-4 py-3 hover:bg-white/10">
+                <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.05] px-4 py-3 backdrop-blur transition-colors duration-150 hover:bg-white/[0.09]">
                   <input
                     type="checkbox"
                     checked={done}
                     onChange={() => uid && toggleTask(uid, t.id)}
-                    className="h-4 w-4"
+                    className="check-light"
                   />
-                  <span className={done ? "text-white/40 line-through" : ""}>
+                  <span
+                    className={`text-[15px] transition-colors ${
+                      done ? "text-white/35 line-through" : "text-white/90"
+                    }`}
+                  >
                     {t.title}
                   </span>
                 </label>
@@ -149,22 +173,26 @@ export function FocusOverlay() {
 
       <button
         onClick={cancel}
-        className="mt-10 text-xs text-white/40 hover:text-red-300"
+        className="mt-10 text-xs text-white/30 transition-colors hover:text-[#e0654a]"
       >
         Discard session
       </button>
 
       {/* Idle / long-session nudge */}
       {idle && !showStop && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="mx-6 max-w-sm rounded-2xl bg-surface p-6 text-center text-ink shadow-xl">
-            <div className="text-2xl">👋</div>
-            <h2 className="mt-2 text-lg font-semibold">Still working?</h2>
-            <p className="mt-1 text-sm text-muted">
-              No activity for a while. Keep the timer running, or pause it so
-              your logged time stays accurate.
+        <div className="animate-fade absolute inset-0 z-10 flex items-center justify-center bg-black/55 backdrop-blur-md">
+          <div className="animate-pop card mx-6 max-w-sm p-7 text-center text-ink">
+            <div aria-hidden className="text-3xl">
+              👋
+            </div>
+            <h2 className="font-display mt-2 text-xl font-semibold">
+              Still working?
+            </h2>
+            <p className="mt-1.5 text-sm text-muted">
+              No activity for a while. Keep going, or pause so your logged time
+              stays honest.
             </p>
-            <div className="mt-5 flex justify-center gap-2">
+            <div className="mt-6 flex justify-center gap-2">
               <Button variant="subtle" onClick={pause}>
                 Pause
               </Button>
@@ -180,10 +208,12 @@ export function FocusOverlay() {
         onClose={() => setShowStop(false)}
         title="Wrap up this session"
       >
-        <p className="mb-3 text-sm text-muted">
+        <p className="mb-4 text-sm text-muted">
           You focused for{" "}
-          <strong className="text-ink">{formatDuration(seconds)}</strong>. Add a
-          quick reflection (optional).
+          <strong className="font-mono font-semibold text-ink tabular-nums">
+            {formatDuration(seconds)}
+          </strong>
+          . Add a quick reflection — future-you will thank you.
         </p>
         <textarea
           autoFocus
@@ -191,9 +221,9 @@ export function FocusOverlay() {
           onChange={(e) => setNote(e.target.value)}
           rows={3}
           placeholder="Got the proposal done, blocked on X…"
-          className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink outline-none focus:border-ink"
+          className="input-base resize-none"
         />
-        <div className="mt-4 flex justify-end gap-2">
+        <div className="mt-5 flex justify-end gap-2">
           <Button variant="ghost" onClick={() => setShowStop(false)}>
             Keep going
           </Button>

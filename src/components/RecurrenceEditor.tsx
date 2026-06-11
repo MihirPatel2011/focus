@@ -1,9 +1,9 @@
 import type { Recurrence, RecurrenceFrequency } from "@/data/types";
 
-const FREQS: { value: RecurrenceFrequency; label: string; unit: string }[] = [
-  { value: "daily", label: "Daily", unit: "day(s)" },
-  { value: "weekly", label: "Weekly", unit: "week(s)" },
-  { value: "monthly", label: "Monthly", unit: "month(s)" },
+const FREQS: { value: RecurrenceFrequency; unit: string }[] = [
+  { value: "daily", unit: "day(s)" },
+  { value: "weekly", unit: "week(s)" },
+  { value: "monthly", unit: "month(s)" },
 ];
 
 const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"]; // index = getDay()
@@ -22,8 +22,8 @@ export function RecurrenceEditor({
   const enabled = Boolean(value);
 
   return (
-    <div className="rounded-lg border border-line p-3">
-      <label className="flex items-center gap-2 text-sm font-medium">
+    <div className="rounded-xl bg-sunken/70 p-3.5">
+      <label className="flex cursor-pointer items-center gap-2.5 text-sm font-medium">
         <input
           type="checkbox"
           checked={enabled}
@@ -35,14 +35,11 @@ export function RecurrenceEditor({
             )
           }
         />
-        Repeats
-        <span aria-hidden className="text-muted">
-          ↻
-        </span>
+        Repeats <span aria-hidden className="text-muted">↻</span>
       </label>
 
       {enabled && value && (
-        <div className="mt-3 flex flex-col gap-3">
+        <div className="animate-rise mt-3.5 flex flex-col gap-3.5">
           <div className="flex items-center gap-2 text-sm">
             <span className="text-muted">Every</span>
             <input
@@ -55,7 +52,7 @@ export function RecurrenceEditor({
                   interval: Math.max(1, Number(e.target.value) || 1),
                 })
               }
-              className="w-16 rounded-md border border-line bg-canvas px-2 py-1 outline-none focus:border-ink"
+              className="input-base w-18 text-center"
             />
             <select
               value={value.frequency}
@@ -65,7 +62,7 @@ export function RecurrenceEditor({
                   frequency: e.target.value as RecurrenceFrequency,
                 })
               }
-              className="rounded-md border border-line bg-canvas px-2 py-1 outline-none focus:border-ink"
+              className="input-base w-auto"
             >
               {FREQS.map((f) => (
                 <option key={f.value} value={f.value}>
@@ -77,7 +74,7 @@ export function RecurrenceEditor({
 
           {value.frequency === "weekly" && (
             <div>
-              <div className="mb-1 text-xs text-muted">On days (optional)</div>
+              <div className="label-caps mb-1.5">On days</div>
               <div className="flex gap-1">
                 {WEEKDAYS.map((d, i) => {
                   const active = value.daysOfWeek?.includes(i);
@@ -94,10 +91,10 @@ export function RecurrenceEditor({
                             : [...cur, i].sort((a, b) => a - b),
                         });
                       }}
-                      className={`h-8 w-8 rounded-md text-xs font-medium ${
+                      className={`h-9 w-9 rounded-lg text-xs font-semibold transition-all duration-150 ${
                         active
-                          ? "bg-ink text-white"
-                          : "bg-line/50 text-muted hover:bg-line"
+                          ? "bg-ink text-canvas shadow-soft"
+                          : "bg-surface text-muted hover:text-ink"
                       }`}
                     >
                       {d}
@@ -108,7 +105,7 @@ export function RecurrenceEditor({
             </div>
           )}
           <p className="text-xs text-muted">
-            Completing this task will create the next one automatically.
+            Completing this task creates the next one automatically.
           </p>
         </div>
       )}

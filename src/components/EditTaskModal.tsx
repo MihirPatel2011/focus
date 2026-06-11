@@ -63,14 +63,14 @@ export function EditTaskModal({
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+          className="input-base"
         />
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
           placeholder="Notes (optional)"
-          className="rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+          className="input-base"
         />
         <ClarifyFields
           values={values}
@@ -79,7 +79,7 @@ export function EditTaskModal({
           projects={projects}
         />
         <label className="text-sm">
-          <span className="mb-1 block text-xs font-medium text-muted">
+          <span className="label-caps mb-1.5 block">
             Estimate (minutes, optional)
           </span>
           <input
@@ -89,13 +89,13 @@ export function EditTaskModal({
             value={estimate}
             onChange={(e) => setEstimate(e.target.value)}
             placeholder="e.g. 30"
-            className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+            className="input-base"
           />
         </label>
         <RecurrenceEditor value={recurrence} onChange={setRecurrence} />
         <div className="flex items-center justify-between">
           <button
-            className="text-sm text-muted hover:text-red-600"
+            className="text-sm text-muted hover:text-[#b3361b]"
             onClick={() => {
               if (uid) deleteTask(uid, task.id);
               onClose();

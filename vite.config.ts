@@ -36,8 +36,8 @@ export default defineConfig(({ command }) => {
         short_name: "Focus",
         description:
           "Personal productivity & time-tracking — tasks, areas, projects, and a focus timer.",
-        theme_color: "#0f172a",
-        background_color: "#0f172a",
+        theme_color: "#f4f1ea",
+        background_color: "#f4f1ea",
         display: "standalone",
         // Scope/start_url must include the base path on GitHub Pages.
         scope: base,

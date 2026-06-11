@@ -6,7 +6,7 @@ import { useUid } from "@/logic/useCurrentUser";
 
 /**
  * Frictionless capture: only a title is required. The task lands in the inbox
- * (status "inbox") to be clarified later. Stays open for rapid entry.
+ * to be clarified later. Shift+Enter keeps it open for rapid entry.
  */
 export function QuickAdd({ open, onClose }: { open: boolean; onClose: () => void }) {
   const uid = useUid();
@@ -33,7 +33,7 @@ export function QuickAdd({ open, onClose }: { open: boolean; onClose: () => void
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Quick add to inbox">
+    <Modal open={open} onClose={onClose} title="Capture">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -45,21 +45,25 @@ export function QuickAdd({ open, onClose }: { open: boolean; onClose: () => void
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           onKeyDown={(e) => {
-            // Shift+Enter keeps the dialog open for the next capture.
             if (e.key === "Enter" && e.shiftKey) {
               e.preventDefault();
               submit(false);
             }
           }}
           placeholder="What's on your mind?"
-          className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+          className="w-full border-0 bg-transparent text-lg text-ink outline-none placeholder:text-muted"
         />
-        <div className="mt-4 flex items-center justify-between">
-          <span className="text-xs text-muted">
-            Enter to save · Shift+Enter to add another
+        <div className="mt-5 flex items-center justify-between border-t border-line/70 pt-4">
+          <span className="hidden text-xs text-muted sm:block">
+            <span className="kbd">↵</span> save ·{" "}
+            <span className="kbd">⇧↵</span> save & add another
           </span>
-          <Button type="submit" disabled={saving || !title.trim()}>
-            Add
+          <Button
+            type="submit"
+            disabled={saving || !title.trim()}
+            className="ml-auto"
+          >
+            Add to inbox
           </Button>
         </div>
       </form>

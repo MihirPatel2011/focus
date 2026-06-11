@@ -76,14 +76,14 @@ export function ProjectForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Project name"
-          className="rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+          className="input-base"
         />
         <label className="text-sm">
-          <span className="mb-1 block text-xs font-medium text-muted">Area</span>
+          <span className="label-caps mb-1.5 block">Area</span>
           <select
             value={area}
             onChange={(e) => setArea(e.target.value)}
-            className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+            className="input-base"
           >
             <option value="">— choose an area —</option>
             {liveAreas.map((a) => (
@@ -98,18 +98,18 @@ export function ProjectForm({
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
           placeholder="Description (optional)"
-          className="rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+          className="input-base"
         />
 
         <div className="grid grid-cols-2 gap-3">
           <label className="text-sm">
-            <span className="mb-1 block text-xs font-medium text-muted">
+            <span className="label-caps mb-1.5 block">
               Status
             </span>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as ProjectStatus)}
-              className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+              className="input-base"
             >
               {STATUSES.map((s) => (
                 <option key={s.value} value={s.value}>
@@ -120,13 +120,13 @@ export function ProjectForm({
           </label>
 
           <label className="text-sm">
-            <span className="mb-1 block text-xs font-medium text-muted">
+            <span className="label-caps mb-1.5 block">
               Priority
             </span>
             <select
               value={priority}
               onChange={(e) => setPriority(Number(e.target.value))}
-              className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+              className="input-base"
             >
               <option value={1}>Low</option>
               <option value={2}>Medium</option>
@@ -137,14 +137,14 @@ export function ProjectForm({
         </div>
 
         <label className="text-sm">
-          <span className="mb-1 block text-xs font-medium text-muted">
+          <span className="label-caps mb-1.5 block">
             Due date (optional)
           </span>
           <input
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm outline-none focus:border-ink"
+            className="input-base"
           />
         </label>
 

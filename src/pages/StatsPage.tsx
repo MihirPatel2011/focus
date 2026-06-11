@@ -34,6 +34,16 @@ function hours(seconds: number) {
   return `${(seconds / 3600).toFixed(1)} h`;
 }
 
+/** Warm, card-matched tooltip styling shared by every chart. */
+const TOOLTIP_STYLE: React.CSSProperties = {
+  background: "#fdfcf8",
+  border: "1px solid #e3ddd1",
+  borderRadius: 12,
+  fontSize: 12,
+  boxShadow: "0 8px 24px -12px rgb(31 27 22 / 0.18)",
+  color: "#1f1b16",
+};
+
 export function StatsPage() {
   const timeLogs = useDataStore((s) => s.timeLogs);
   const tasks = useDataStore((s) => s.tasks);
@@ -62,28 +72,30 @@ export function StatsPage() {
   return (
     <div>
       <header className="mb-5">
-        <h1 className="text-2xl font-semibold">Statistics</h1>
+        <h1 className="page-title">Statistics</h1>
         <p className="text-sm text-muted">
           Am I spending time where I intend to?
         </p>
       </header>
 
       {/* Date-range picker */}
-      <div className="mb-6 flex flex-wrap items-center gap-2">
+      <div className="-mx-1 mb-6 flex items-center gap-1.5 overflow-x-auto px-1 pb-1">
         {PRESETS.map((p) => (
           <button
             key={p.key}
             onClick={() => setPreset(p.key)}
-            className={`rounded-full px-3 py-1 text-sm font-medium ${
-              preset === p.key ? "bg-ink text-white" : "bg-line/50 text-muted"
+            className={`shrink-0 rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-all duration-200 ${
+              preset === p.key
+                ? "bg-ink text-canvas shadow-soft"
+                : "text-soft hover:bg-ink/5"
             }`}
           >
             {p.label}
           </button>
         ))}
         <div
-          className={`flex items-center gap-1 rounded-full px-2 py-1 text-sm ${
-            preset === "custom" ? "bg-line" : "bg-line/50"
+          className={`flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-sm transition-colors ${
+            preset === "custom" ? "bg-ink/[0.08]" : "bg-ink/[0.04]"
           }`}
         >
           <input
@@ -128,7 +140,7 @@ export function StatsPage() {
       </div>
 
       {!hasData ? (
-        <div className="rounded-xl border border-dashed border-line p-10 text-center text-muted">
+        <div className="rounded-2xl border border-dashed border-line2/70 px-6 py-14 text-center text-sm text-muted">
           No focus sessions or completed tasks in this range yet.
         </div>
       ) : (
@@ -145,7 +157,7 @@ export function StatsPage() {
                         {g.actualHours.toFixed(1)} / {g.goalHours.toFixed(1)} h
                         <span
                           className="ml-2 font-medium"
-                          style={{ color: g.pct >= 100 ? "#059669" : g.color }}
+                          style={{ color: g.pct >= 100 ? "#7d8a4e" : g.color }}
                         >
                           {g.pct}%
                         </span>
@@ -184,7 +196,7 @@ export function StatsPage() {
                         <Cell key={a.areaId} fill={a.color} />
                       ))}
                     </Pie>
-                    <Tooltip
+                    <Tooltip contentStyle={TOOLTIP_STYLE}
                       formatter={(v: number) => formatDuration(v)}
                     />
                     <Legend />
@@ -196,7 +208,7 @@ export function StatsPage() {
                     layout="vertical"
                     margin={{ left: 8, right: 16 }}
                   >
-                    <CartesianGrid horizontal={false} stroke="#eef2f7" />
+                    <CartesianGrid horizontal={false} stroke="#e9e4d9" />
                     <XAxis
                       type="number"
                       tickFormatter={(v) => `${(v / 3600).toFixed(0)}h`}
@@ -208,7 +220,7 @@ export function StatsPage() {
                       width={80}
                       fontSize={11}
                     />
-                    <Tooltip formatter={(v: number) => hours(v)} />
+                    <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v: number) => hours(v)} />
                     <Bar dataKey="seconds" radius={[0, 4, 4, 0]}>
                       {stats.byArea.map((a) => (
                         <Cell key={a.areaId} fill={a.color} />
@@ -229,7 +241,7 @@ export function StatsPage() {
                   layout="vertical"
                   margin={{ left: 8, right: 16 }}
                 >
-                  <CartesianGrid horizontal={false} stroke="#eef2f7" />
+                  <CartesianGrid horizontal={false} stroke="#e9e4d9" />
                   <XAxis
                     type="number"
                     tickFormatter={(v) => `${(v / 3600).toFixed(0)}h`}
@@ -241,7 +253,7 @@ export function StatsPage() {
                     width={100}
                     fontSize={11}
                   />
-                  <Tooltip formatter={(v: number) => hours(v)} />
+                  <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v: number) => hours(v)} />
                   <Bar dataKey="seconds" radius={[0, 4, 4, 0]}>
                     {stats.byProject.map((p) => (
                       <Cell key={p.projectId} fill={p.color} />
@@ -256,16 +268,16 @@ export function StatsPage() {
           <Card title="Activity over time">
             <ResponsiveContainer width="100%" height={240}>
               <LineChart data={stats.perDay} margin={{ left: -16, right: 8 }}>
-                <CartesianGrid stroke="#eef2f7" />
+                <CartesianGrid stroke="#e9e4d9" />
                 <XAxis dataKey="label" fontSize={11} minTickGap={20} />
                 <YAxis allowDecimals={false} fontSize={11} />
-                <Tooltip />
+                <Tooltip contentStyle={TOOLTIP_STYLE} />
                 <Legend />
                 <Line
                   type="monotone"
                   dataKey="completed"
                   name="Tasks completed"
-                  stroke="#2563eb"
+                  stroke="#c2410c"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -273,7 +285,7 @@ export function StatsPage() {
                   type="monotone"
                   dataKey="focusedHours"
                   name="Focused hours"
-                  stroke="#059669"
+                  stroke="#7d8a4e"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -293,7 +305,7 @@ export function StatsPage() {
                   layout="vertical"
                   margin={{ left: 8, right: 16 }}
                 >
-                  <CartesianGrid horizontal={false} stroke="#eef2f7" />
+                  <CartesianGrid horizontal={false} stroke="#e9e4d9" />
                   <XAxis type="number" fontSize={11} />
                   <YAxis
                     type="category"
@@ -304,18 +316,18 @@ export function StatsPage() {
                       v.length > 16 ? v.slice(0, 15) + "…" : v
                     }
                   />
-                  <Tooltip formatter={(v: number) => `${v} min`} />
+                  <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v: number) => `${v} min`} />
                   <Legend />
                   <Bar
                     dataKey="estimateMinutes"
                     name="Estimate"
-                    fill="#cbd5e1"
+                    fill="#d8d1c3"
                     radius={[0, 4, 4, 0]}
                   />
                   <Bar
                     dataKey="actualMinutes"
                     name="Actual"
-                    fill="#2563eb"
+                    fill="#c2410c"
                     radius={[0, 4, 4, 0]}
                   />
                 </BarChart>
@@ -330,17 +342,19 @@ export function StatsPage() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-line bg-surface px-4 py-3">
-      <div className="text-xs text-muted">{label}</div>
-      <div className="mt-1 text-xl font-semibold tabular-nums">{value}</div>
+    <div className="card px-4 py-3.5">
+      <div className="label-caps">{label}</div>
+      <div className="mt-1 font-mono text-[1.45rem] font-semibold leading-none tracking-tight tabular-nums">
+        {value}
+      </div>
     </div>
   );
 }
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border border-line bg-surface p-4">
-      <h2 className="mb-3 text-sm font-medium text-muted">{title}</h2>
+    <section className="card p-4 sm:p-5">
+      <h2 className="label-caps mb-4">{title}</h2>
       {children}
     </section>
   );

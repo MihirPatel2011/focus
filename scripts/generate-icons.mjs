@@ -7,9 +7,9 @@ import { deflateSync } from "node:zlib";
 const OUT = new URL("../public/icons/", import.meta.url);
 mkdirSync(OUT, { recursive: true });
 
-const BG = [15, 23, 42, 255]; // #0f172a
-const WHITE = [255, 255, 255, 255];
-const CYAN = [56, 189, 248, 255];
+const BG = [31, 27, 22, 255]; // #1f1b16 warm ink
+const WHITE = [244, 241, 234, 255]; // #f4f1ea paper
+const CYAN = [194, 65, 12, 255]; // #c2410c ember
 
 function px(size, x, y, maskable) {
   const cx = size / 2;
