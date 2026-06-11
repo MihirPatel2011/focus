@@ -7,16 +7,6 @@
     <meta name="theme-color" content="#0f172a" />
     <meta name="description" content="Focus — personal productivity & time-tracking." />
     <title>Focus</title>
-    <script>
-      window.addEventListener("error", function (e) {
-        var d = document.createElement("pre");
-        d.style.cssText =
-          "position:fixed;inset:0;z-index:99999;margin:0;padding:16px;white-space:pre-wrap;font:13px monospace;background:#fff;color:#b00;overflow:auto";
-        d.textContent =
-          "JS ERROR: " + (e.error && e.error.stack ? e.error.stack : e.message);
-        document.documentElement.appendChild(d);
-      });
-    </script>
     <!-- Restore the deep-link path encoded by 404.html (GitHub Pages SPA fallback). -->
     <script>
       (function () {

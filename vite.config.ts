@@ -10,8 +10,11 @@ import { VitePWA } from "vite-plugin-pwa";
 // the production base with VITE_BASE_PATH (e.g. "/" for a custom domain).
 // https://vite.dev/config/
 export default defineConfig(({ command }) => {
-  const base =
-    command === "build" ? (process.env.VITE_BASE_PATH ?? "/focus/") : "/";
+  // Treat an empty/whitespace VITE_BASE_PATH as unset. CI passes
+  // `${{ vars.VITE_BASE_PATH }}`, which expands to "" when the repo variable is
+  // undefined — `??` wouldn't catch that, so an empty value must fall back too.
+  const envBase = process.env.VITE_BASE_PATH?.trim();
+  const base = command === "build" ? envBase || "/focus/" : "/";
 
   return {
     base,
